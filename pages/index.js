@@ -1,7 +1,10 @@
+import axios from "axios";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 
-export default function Home() {
+export default function Home(props) {
+  const posts = props.data;
   return (
     <>
       <header className="p-3 bg-dark text-white">
@@ -68,6 +71,35 @@ export default function Home() {
           </div>
         </div>
       </header>
+      <section>
+        <div className="container">
+          <div className="row">
+            <div className="col">
+              <h1>Home</h1>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col">
+              <ol>
+                {posts.map((post) => (
+                  <li key={post.id}>
+                    <Link href={{ pathname: "/[id]", query: { id: post.id } }}>
+                      <a>{post.title}</a>
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
+
+export const getStaticProps = async () => {
+  const res = await axios.get("https://jsonplaceholder.typicode.com/posts");
+  return {
+    props: { data: res.data.slice(0, 10) },
+  };
+};
